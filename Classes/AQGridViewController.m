@@ -53,12 +53,14 @@
 	self.gridView.dataSource = self;
 }
 
-- (void) loadView
-{
-	AQGridView * aView = [[AQGridView alloc] initWithFrame: CGRectZero];
+- (void) loadView {
+
+	AQGridView *aView = [[AQGridView alloc] initWithFrame:[UIScreen mainScreen].bounds];
+	
 	self.gridView = aView;
     
-    [self _sharedGridViewDefaultSetup];
+	[self _sharedGridViewDefaultSetup];
+	
 }
 
 - (void) awakeFromNib
@@ -112,12 +114,21 @@
 }
 */
 
-- (void) viewWillAppear: (BOOL) animated
-{
-	if ( (_clearsSelectionOnViewWillAppear) && ([self.gridView indexOfSelectedItem] != NSNotFound) )
-	{
-		[self.gridView deselectItemAtIndex: [self.gridView indexOfSelectedItem] animated: NO];
+- (void) viewWillAppear:(BOOL) animated {
+
+	AQGridView *gv = self.gridView;
+	NSIndexSet *indexes = gv.selectionIndexes;
+	
+	if (_clearsSelectionOnViewWillAppear && [indexes count]) {
+		
+		[indexes enumerateIndexesUsingBlock:^(NSUInteger idx, BOOL *stop) {
+			
+			[gv deselectItemAtIndex:idx animated:NO];
+			
+		}];
+	 
 	}
+	
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
